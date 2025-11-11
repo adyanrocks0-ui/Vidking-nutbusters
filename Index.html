@@ -1,40 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>VidKing Player Demo</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>VidKing Player | Nutbusters</title>
   <style>
     body {
-      background-color: #0e0e0e;
-      color: white;
+      background-color: #0d1117;
+      color: #fff;
       font-family: Arial, sans-serif;
       text-align: center;
-      padding: 20px;
+      margin: 0;
+      padding: 0;
     }
-
+    h1 {
+      margin: 20px 0;
+    }
     iframe {
-      width: 80%;
-      height: 480px;
       border: none;
-      margin-top: 20px;
+      width: 90%;
+      max-width: 960px;
+      height: 540px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.5);
     }
-
     #messageArea {
       margin-top: 20px;
-      color: #00bfff;
+      font-size: 14px;
+      color: #0ff;
     }
   </style>
 </head>
 <body>
-  <h1>🎥 VidKing Player Demo</h1>
-  <p>Watch your video below. Progress is saved automatically.</p>
+  <h1>VidKing Player Example</h1>
 
-  <!-- Replace this URL with your own VidKing embed link -->
-  <iframe id="vidkingPlayer" src="https://www.vidking.net/embed/tv/38693/10/8?autoPlay=true&nextEpisode=true&episodeSelector=true" allowfullscreen></iframe>
+  <!-- Embedded VidKing video -->
+  <iframe
+    id="playerFrame"
+    src="https://www.vidking.net/embed/tv/38693/10/8?autoPlay=true&nextEpisode=true&episodeSelector=true"
+    allowfullscreen
+  ></iframe>
 
-  <div id="messageArea">Progress: 0%</div>
+  <p id="messageArea">Waiting for progress data...</p>
 
-  <script src="script.js"></script>
+  <script>
+    // Listen for progress messages from the VidKing player
+    window.addEventListener("message", function (event) {
+      try {
+        const data = typeof event.data === "string" ? JSON.parse(event.data) : event.data;
+        if (data && data.progress !== undefined) {
+          localStorage.setItem("lastProgress", JSON.stringify(data));
+          document.querySelector("#messageArea").innerText =
+            `Progress: ${data.progress}% | Time: ${data.timestamp}s`;
+        }
+      } catch (e) {
+        console.log("Non-JSON message:", event.data);
+      }
+    });
+  </script>
 </body>
 </html>
